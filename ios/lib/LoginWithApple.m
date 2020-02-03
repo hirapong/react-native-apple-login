@@ -27,9 +27,9 @@
     ASAuthorizationAppleIDProvider *appleIDProvider = [[ASAuthorizationAppleIDProvider alloc]init];
     ASAuthorizationAppleIDRequest *request = [appleIDProvider createRequest];
     request.requestedScopes = @[ASAuthorizationScopeFullName, ASAuthorizationScopeEmail];
-    
+
     ASAuthorizationController *authorizationController = [[ASAuthorizationController alloc]initWithAuthorizationRequests:@[request]];
-    
+
     authorizationController.delegate = self;
     authorizationController.presentationContextProvider = self;
     [authorizationController performRequests];
@@ -41,9 +41,13 @@
     NSLog(@"%@",authorization);
     ASAuthorizationAppleIDCredential *appleIDCredential = [authorization credential];
     if(appleIDCredential) {
-    
+
         NSMutableDictionary *userDetails = @{@"userIdentifier": [appleIDCredential user],
                                                     @"auth_code":[[NSString alloc] initWithData:[appleIDCredential authorizationCode] encoding:NSUTF8StringEncoding],
+
+                                                    @"id_token":[[NSString alloc] initWithData:[appleIDCredential identityToken] encoding:NSUTF8StringEncoding],
+
+                                                    @"state": [appleIDCredential state],
 
                                                     @"first_name" : [appleIDCredential fullName].givenName?:[NSNull null],
 
@@ -54,7 +58,7 @@
 
         self.successBlock(userDetails);
     }
-   
+
 }
 
 
